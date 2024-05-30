@@ -16,6 +16,7 @@ channel_secret = os.getenv("LINE_CHANNEL_SECRET")
 
 line_bot_api = LineBotApi(access_token)
 handler = WebhookHandler(channel_secret)
+working_status = os.getenv("DEFALUT_TALKING", default = "true").lower() == "true"
 
 @app.route("/", methods=['POST'])
 def linebot():

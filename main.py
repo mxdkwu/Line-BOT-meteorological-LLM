@@ -68,7 +68,7 @@ async def linebot(request: Request):
                 text_message = TextSendMessage(text=text)
                 await line_bot_api.reply_message(reply_token, text_message)
     except InvalidSignatureError:
-        raise HTTPException(status_code=400, detail="Invalid signature")
+        raise HTTPException(status_code=400, detail="無效的簽名")
     except Exception as e:
         print(e)
 

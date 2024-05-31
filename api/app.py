@@ -1,7 +1,6 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import os
 import time
-import logging
 
 # 載入 LINE Message API 相關函式庫
 from linebot import LineBotApi, WebhookHandler
@@ -11,19 +10,19 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageSend
 import json
 app = Flask(__name__)
 
-# 設置日誌記錄
-logging.basicConfig(level=logging.INFO)
-
 # 從環境變數中取得 LINE Bot 的設定
 access_token = os.getenv("LINE_ACCESS_TOKEN")
 channel_secret = os.getenv("LINE_CHANNEL_SECRET")
 
 if not access_token or not channel_secret:
-    logging.error("環境變數 LINE_ACCESS_TOKEN 或 LINE_CHANNEL_SECRET 未設置")
-    raise EnvironmentError("LINE_ACCESS_TOKEN 或 LINE_CHANNEL_SECRET 未設置")
+    raise EnvironmentError("環境變數 LINE_ACCESS_TOKEN 或 LINE_CHANNEL_SECRET 未設置")
 
 line_bot_api = LineBotApi(access_token)
 handler = WebhookHandler(channel_secret)
+
+@app.route("/", methods=['GET'])
+def index():
+    return "Hello, this is the Flask app root."
 
 @app.route("/", methods=['POST'])
 def linebot():
@@ -34,8 +33,7 @@ def linebot():
         json_data = json.loads(body)  # 轉換內容為 json 格式
         reply_token = json_data['events'][0]['replyToken']  # 取得回傳訊息的 Token ( reply message 使用 )
         user_id = json_data['events'][0]['source']['userId']  # 取得使用者 ID ( push message 使用 )
-        logging.info(f"Received message from user {user_id}: {json_data}")  # 記錄收到的訊息
-
+        print(json_data)  # 印出內容
         message_type = json_data['events'][0]['message']['type']
         
         if message_type == 'text':
@@ -49,10 +47,8 @@ def linebot():
                 text_message = TextSendMessage(text=text)
                 line_bot_api.reply_message(reply_token, text_message)
     except InvalidSignatureError:
-        logging.error("Invalid signature. Please check your channel access token/channel secret.")
         return 'Invalid signature', 400
     except Exception as e:
-        logging.error(f"Error: {e}")  # 發生錯誤就印出完整錯誤內容
         return str(e), 500
     return 'OK'  # 驗證 Webhook 使用，不能省略
 

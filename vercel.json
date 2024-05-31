@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/"
+    }
+  ],
+  "env": {
+    "LINEBOT_ACCESS_TOKEN": "@linebot-access-token",
+    "LINEBOT_CHANNEL_SECRET": "@linebot-channel-secret"
+  }
+}

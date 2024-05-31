@@ -4,10 +4,4 @@
       "source": "/(.*)",
       "destination": "/main.py"
     }
-  ],
-  "functions": {
-    "api/**/*": {
-      "maxDuration": 10
-    }
-  }
 }
